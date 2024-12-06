@@ -1,40 +1,17 @@
 using Newtonsoft.Json;
 using Serilog;
-using SpotifyPlaylistUtilities.Models;
+using SpotifyPlaylistUtilities.Models.Serializable;
+using SpotifyPlaylistUtilities.SpotifyApiClient.Playlists;
 
-namespace SpotifyPlaylistUtilities.SpotifyApiClient.Playlists;
+namespace SpotifyPlaylistUtilities.SpotifyApiClient.PlaylistBackups;
 
-public class BackupOperator(ILogger _logger, Searcher _searcher, TracksRemover _tracksRemover, TracksAdder _tracksAdder)
+public class RestoreOperator(ILogger _logger, Searcher _searcher, TracksRemover _tracksRemover, TracksAdder _tracksAdder)
 {
-    public async Task BackupTracksToJsonFile(ManagedPlaylist playlistToBackup)
-    {
-        var jsonString = JsonConvert.SerializeObject(playlistToBackup);
-    
-        var safePlaylistName = playlistToBackup.Name;
-
-        foreach (var invalidFileNameChar in Path.GetInvalidFileNameChars())
-            safePlaylistName = safePlaylistName.Replace(invalidFileNameChar.ToString(), "_");
-        
-        var playlistBackupFolderPath = Path.Join(AppInfo.Paths.PlaylistBackupsDirectory, safePlaylistName);
-    
-        Directory.CreateDirectory(playlistBackupFolderPath);
-        
-        var filename =
-            DateTimeOffset.Now.ToString("s")
-                .Replace("T", "_T")
-                .Replace(":", "-")
-            + $"_{playlistToBackup.Id}.json";
-    
-        var fullFilePath = Path.Join(playlistBackupFolderPath, filename);
-        
-        await File.WriteAllTextAsync(fullFilePath, jsonString);
-    }
-    
     public async Task RestorePlaylistFromJsonFile(string jsonFilePath)
     {
         var rawJson = await File.ReadAllTextAsync(jsonFilePath);
 
-        var convertedPlaylist = JsonConvert.DeserializeObject<ManagedPlaylist>(rawJson);
+        var convertedPlaylist = JsonConvert.DeserializeObject<SerializableManagedPlaylist>(rawJson);
         
         if (convertedPlaylist is null) 
             throw new NullReferenceException($"convertedPlaylist is null in {nameof(RestorePlaylistFromJsonFile)}");

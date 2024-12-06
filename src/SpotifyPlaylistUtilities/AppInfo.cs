@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace SpotifyPlaylistUtilities;
@@ -23,6 +24,8 @@ public static class AppInfo
             {
                 var basePath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), AppName);
 
+                Debug.WriteLine($"BASE PATH IS: {basePath}");
+
                 setAllPaths(basePath);
             }
 
@@ -30,7 +33,9 @@ public static class AppInfo
                 string.IsNullOrWhiteSpace(PlaylistBackupsDirectory) ||
                 string.IsNullOrWhiteSpace(ApplicationLoggingDirectory) ||
                 string.IsNullOrWhiteSpace(TrackWeightsDirectory) ||
-                string.IsNullOrWhiteSpace(TrackWeightsJsonFullPath))
+                string.IsNullOrWhiteSpace(TrackWeightsJsonFullPath) ||
+                string.IsNullOrWhiteSpace(CacheDirectory) ||
+                string.IsNullOrWhiteSpace(CredentialsFullPath))
             {
                 throw new Exception("OS Could not be detected automatically");
             }

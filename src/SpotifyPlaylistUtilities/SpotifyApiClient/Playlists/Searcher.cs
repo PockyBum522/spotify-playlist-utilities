@@ -5,7 +5,7 @@ namespace SpotifyPlaylistUtilities.SpotifyApiClient.Playlists;
 
 public class Searcher(ILogger logger, ClientManager spotifyClientManager)
 {
-    public async Task<ManagedPlaylist> GetPlaylistByName(string playlistName)
+    public async Task<SpotifyManagedPlaylist> GetPlaylistByName(string playlistName)
     {
         var spotifyClient = await spotifyClientManager.GetSpotifyClient();
         
@@ -26,7 +26,7 @@ public class Searcher(ILogger logger, ClientManager spotifyClientManager)
             
             if (playlist.Name != playlistName) continue;
 
-            var returnManagedPlaylist = new ManagedPlaylist(logger, spotifyClient, playlist);
+            var returnManagedPlaylist = new SpotifyManagedPlaylist(logger, spotifyClient, playlist);
 
             await returnManagedPlaylist.FetchAllTracks();
             
@@ -36,7 +36,7 @@ public class Searcher(ILogger logger, ClientManager spotifyClientManager)
         throw new ArgumentException("Couldn't find playlist with name of: {SuppliedName}", playlistName);
     }
     
-    public async Task<ManagedPlaylist> GetPlaylistById(string playlistId)
+    public async Task<SpotifyManagedPlaylist> GetPlaylistById(string playlistId)
     {
         // Lazy rate-limiting because I do not care how long this takes
         await Task.Delay(2000);
@@ -62,7 +62,7 @@ public class Searcher(ILogger logger, ClientManager spotifyClientManager)
             // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract because: nullable types are somehow lying, this absolutely happens
             if (playlist is null) continue;     
 
-            var returnManagedPlaylist = new ManagedPlaylist(logger, spotifyClient, playlist);
+            var returnManagedPlaylist = new SpotifyManagedPlaylist(logger, spotifyClient, playlist);
 
             await returnManagedPlaylist.FetchAllTracks();
             

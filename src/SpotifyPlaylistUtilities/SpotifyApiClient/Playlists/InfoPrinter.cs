@@ -1,5 +1,4 @@
 using Serilog;
-using SpotifyAPI.Web;
 
 namespace SpotifyPlaylistUtilities.SpotifyApiClient.Playlists;
 

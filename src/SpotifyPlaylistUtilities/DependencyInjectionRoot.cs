@@ -5,11 +5,11 @@ using Quartz;
 using Quartz.Impl;
 using Quartz.Logging;
 using Serilog;
-using SpotifyAPI.Web;
 using SpotifyPlaylistUtilities.RecurringJobs;
 using SpotifyPlaylistUtilities.Scheduler;
 using SpotifyPlaylistUtilities.Scheduler.SchedulerLogging;
 using SpotifyPlaylistUtilities.SpotifyApiClient;
+using SpotifyPlaylistUtilities.SpotifyApiClient.PlaylistBackups;
 using SpotifyPlaylistUtilities.SpotifyApiClient.Playlists;
 
 namespace SpotifyPlaylistUtilities;
@@ -68,6 +68,7 @@ public class DependencyInjectionRoot
         DependencyContainerBuilder.RegisterType<TracksAdder>().AsSelf().SingleInstance();
         DependencyContainerBuilder.RegisterType<TracksRemover>().AsSelf().SingleInstance();
         DependencyContainerBuilder.RegisterType<BackupOperator>().AsSelf().SingleInstance();
+        DependencyContainerBuilder.RegisterType<RestoreOperator>().AsSelf().SingleInstance();
         
         // Build the DI container        
         var container = DependencyContainerBuilder.Build();

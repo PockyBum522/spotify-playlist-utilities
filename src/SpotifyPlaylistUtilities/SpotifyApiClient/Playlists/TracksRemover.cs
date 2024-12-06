@@ -6,7 +6,7 @@ namespace SpotifyPlaylistUtilities.SpotifyApiClient.Playlists;
 
 public class TracksRemover(ILogger logger, ClientManager spotifyClientManager)
 {
-    public async Task DeleteAllSpotifyPlaylistTracks(ManagedPlaylist spotifyPlaylistToClear)
+    public async Task DeleteAllSpotifyPlaylistTracks(SpotifyManagedPlaylist spotifyPlaylistToClear)
     {
         var urisToRemove = new List<string>();
         
@@ -29,7 +29,7 @@ public class TracksRemover(ILogger logger, ClientManager spotifyClientManager)
             await remove100ItemsFrom(spotifyPlaylistToClear, urisToRemove);
     }
 
-    private async Task remove100ItemsFrom(ManagedPlaylist spotifyPlaylist, List<string> urisToRemove)
+    private async Task remove100ItemsFrom(SpotifyManagedPlaylist spotifyPlaylist, List<string> urisToRemove)
     {
         var spotifyClient = await spotifyClientManager.GetSpotifyClient();
 

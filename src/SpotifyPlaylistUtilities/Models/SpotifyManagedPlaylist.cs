@@ -3,7 +3,7 @@ using SpotifyAPI.Web;
 
 namespace SpotifyPlaylistUtilities.Models;
 
-public class ManagedPlaylist(ILogger logger, SpotifyClient spotifyClient, FullPlaylist nativePlaylist)
+public class SpotifyManagedPlaylist(ILogger logger, SpotifyClient spotifyClient, FullPlaylist nativePlaylist)
 {
     public string Name { get; set; } = nativePlaylist.Name ?? "ERROR GETTING PLAYLIST NAME";
     public string Id { get; set; } = nativePlaylist.Id ?? "ERROR GETTING PLAYLIST ID";

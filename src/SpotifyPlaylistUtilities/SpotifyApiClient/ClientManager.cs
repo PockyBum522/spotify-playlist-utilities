@@ -6,7 +6,6 @@ using SpotifyAPI.Web.Auth;
 
 namespace SpotifyPlaylistUtilities.SpotifyApiClient;
 
-// ReSharper disable InconsistentNaming because _logger is going to behave like a private field
 public class ClientManager(ILogger _logger)
 {
     private SpotifyClient? _spotifyClient;
@@ -73,6 +72,8 @@ public class ClientManager(ILogger _logger)
             // Quick check that everything is behaving
             var me = await _spotifyClient.UserProfile.Current();
             _logger.Information("Welcome {DisplayName} with User ID:({Id}), you're authenticated!", me.DisplayName, me.Id);
+
+            await Task.Delay(2000);
             
             clientIsReady = true;
         }

@@ -1,4 +1,4 @@
-﻿namespace SpotifyPlaylistUtilities.Models;
+﻿namespace SpotifyPlaylistUtilities.Models.Serializable;
 
 public class SerializableWeightedTrack
 {

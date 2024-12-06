@@ -1,12 +1,13 @@
 using Serilog;
 using SpotifyAPI.Web;
 using SpotifyPlaylistUtilities.Models;
+using SpotifyPlaylistUtilities.Models.Serializable;
 
 namespace SpotifyPlaylistUtilities.SpotifyApiClient.Playlists;
 
 public class TracksAdder(ILogger logger, ClientManager spotifyClientManager)
 {
-    public async Task AddTracksToSpotifyPlaylist(ManagedPlaylist spotifyPlaylist, List<ManagedPlaylistTrack> tracksToAdd)
+    public async Task AddTracksToSpotifyPlaylist(SpotifyManagedPlaylist spotifyPlaylist, List<SerializableManagedPlaylistTrack> tracksToAdd)
     {
         var urisToAdd = new List<string>();
         
@@ -27,7 +28,7 @@ public class TracksAdder(ILogger logger, ClientManager spotifyClientManager)
             await add100ItemsToPlaylist(spotifyPlaylist, urisToAdd);
     }
     
-    private async Task add100ItemsToPlaylist(ManagedPlaylist spotifyPlaylist, List<string> urisToAdd)
+    private async Task add100ItemsToPlaylist(SpotifyManagedPlaylist spotifyPlaylist, List<string> urisToAdd)
     {
         var spotifyClient = await spotifyClientManager.GetSpotifyClient();
         
