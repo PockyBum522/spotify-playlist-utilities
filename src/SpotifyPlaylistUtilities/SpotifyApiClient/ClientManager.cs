@@ -20,20 +20,29 @@ public class ClientManager(ILogger _logger)
     /// <exception cref="NullReferenceException">If there was a fatal problem setting the client up</exception>
     public async Task<SpotifyClient> GetSpotifyClient()
     {
-        await ensureClientIsConnected();
+        var clientWasAlreadyConnected = await ensureClientIsConnected();
         
         if (_spotifyClient is null) throw new NullReferenceException($"_spotifyClient was null after setup in {nameof(ClientManager)}");
+        
+        // Lazy rate-limiting because I do not care how long this takes;
+        //      and we don't have to do it if we didn't perform any API operations because it was already connected
+        if (!clientWasAlreadyConnected)
+            await Task.Delay(2000);
         
         return _spotifyClient;
     }
 
-    private async Task ensureClientIsConnected()
+    private async Task<bool> ensureClientIsConnected()
     {
         if (!File.Exists(AppInfo.Paths.CredentialsFullPath) || _spotifyClient is null)
             await completeOAuth();
 
-        if (!await spotifyClientIsReady())
+        var clientWasAlreadyConnected = await spotifyClientIsReady(); 
+        
+        if (!clientWasAlreadyConnected)
             await connectNewSpotifyClient();
+
+        return clientWasAlreadyConnected;
     }
 
     private async Task connectNewSpotifyClient()

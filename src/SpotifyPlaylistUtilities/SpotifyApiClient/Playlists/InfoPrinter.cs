@@ -11,6 +11,8 @@ public class InfoPrinter(ILogger logger, ClientManager spotifyClientManager)
         
         var playlists = await spotifyClient.PaginateAll(await spotifyClient.Playlists.CurrentUsers().ConfigureAwait(false));
         
+        await Task.Delay(2000);
+        
         foreach (var playlist in playlists)
         {
             // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract because: nullable types are somehow lying, this absolutely happens

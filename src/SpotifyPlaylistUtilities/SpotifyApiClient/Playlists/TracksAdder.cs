@@ -6,39 +6,39 @@ namespace SpotifyPlaylistUtilities.SpotifyApiClient.Playlists;
 
 public class TracksAdder(ILogger logger, ClientManager spotifyClientManager)
 {
-    public async Task AddTracksToSpotifyPlaylist(ManagedPlaylist playlist, List<ManagedPlaylistTrack> tracks)
+    public async Task AddTracksToSpotifyPlaylist(ManagedPlaylist spotifyPlaylist, List<ManagedPlaylistTrack> tracksToAdd)
     {
-        var itemsToAdd = new List<string>();
+        var urisToAdd = new List<string>();
         
-        foreach (var track in tracks)
+        foreach (var track in tracksToAdd)
         {
             logger.Debug("Attempting to add: {TrackName}", track.Name);
     
-            itemsToAdd.Add(track.Uri);
+            urisToAdd.Add(track.Uri);
     
-            if (itemsToAdd.Count < 100) continue;
+            if (urisToAdd.Count < 100) continue;
             
             // If we hit capacity, add and clear
-            await add100ItemsToPlaylist(itemsToAdd, playlist.Id);
+            await add100ItemsToPlaylist(spotifyPlaylist, urisToAdd);
         }
         
         // Add any remaining
-        if (itemsToAdd.Count > 0)
-            await add100ItemsToPlaylist(itemsToAdd, playlist.Id);
+        if (urisToAdd.Count > 0)
+            await add100ItemsToPlaylist(spotifyPlaylist, urisToAdd);
     }
     
-    private async Task add100ItemsToPlaylist(List<string> itemsToAdd, string playlistIdToAddTo)
+    private async Task add100ItemsToPlaylist(ManagedPlaylist spotifyPlaylist, List<string> urisToAdd)
     {
         var spotifyClient = await spotifyClientManager.GetSpotifyClient();
-
-        // More lazy rate-limiting
-        await Task.Delay(2000);
-
+        
         // Otherwise, since we can only add 100 at a time:
-        var itemsToAddRequest = new PlaylistAddItemsRequest(itemsToAdd);
+        var tracksAddRequest = new PlaylistAddItemsRequest(urisToAdd);
 
-        await spotifyClient.Playlists.AddItems(playlistIdToAddTo, itemsToAddRequest);
+        await spotifyClient.Playlists.AddItems(spotifyPlaylist.Id, tracksAddRequest);
 
-        itemsToAdd.Clear();
+        urisToAdd.Clear();
+        
+        // Lazy rate-limiting because I do not care how long this takes, not to mention track deletes are slow anyways
+        await Task.Delay(2000);
     }
 }
