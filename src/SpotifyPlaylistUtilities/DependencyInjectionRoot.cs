@@ -67,6 +67,7 @@ public class DependencyInjectionRoot
         DependencyContainerBuilder.RegisterType<InfoPrinter>().AsSelf().SingleInstance();
         DependencyContainerBuilder.RegisterType<TracksAdder>().AsSelf().SingleInstance();
         DependencyContainerBuilder.RegisterType<TracksRemover>().AsSelf().SingleInstance();
+        DependencyContainerBuilder.RegisterType<Shuffler>().AsSelf().SingleInstance();
         DependencyContainerBuilder.RegisterType<BackupOperator>().AsSelf().SingleInstance();
         DependencyContainerBuilder.RegisterType<RestoreOperator>().AsSelf().SingleInstance();
         

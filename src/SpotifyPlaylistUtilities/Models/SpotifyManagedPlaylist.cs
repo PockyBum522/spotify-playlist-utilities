@@ -7,11 +7,11 @@ public class SpotifyManagedPlaylist(ILogger logger, SpotifyClient spotifyClient,
 {
     public string Name { get; set; } = nativePlaylist.Name ?? "ERROR GETTING PLAYLIST NAME";
     public string Id { get; set; } = nativePlaylist.Id ?? "ERROR GETTING PLAYLIST ID";
-    public List<ManagedPlaylistTrack> FetchedTracks => getCachedTracks();
+    public List<SpotifyManagedPlaylistTrack> FetchedTracks => getCachedTracks();
     
-    private List<ManagedPlaylistTrack>? _fetchedTracks;
+    private List<SpotifyManagedPlaylistTrack>? _fetchedTracks;
     
-    private List<ManagedPlaylistTrack> getCachedTracks()
+    private List<SpotifyManagedPlaylistTrack> getCachedTracks()
     {
         if (_fetchedTracks is null) throw new Exception("You must call FetchAllTracks() before using this property.");
 
@@ -20,7 +20,7 @@ public class SpotifyManagedPlaylist(ILogger logger, SpotifyClient spotifyClient,
     
     public async Task FetchAllTracks()
     {
-        _fetchedTracks ??= new List<ManagedPlaylistTrack>();
+        _fetchedTracks ??= new List<SpotifyManagedPlaylistTrack>();
         
         _fetchedTracks.Clear();
         
@@ -46,7 +46,7 @@ public class SpotifyManagedPlaylist(ILogger logger, SpotifyClient spotifyClient,
                 logger.Debug("OriginalTrack: #{TrackNumber}: {ArtistString} - {TrackName} | ID: {Id}", tracksCount++, artistString, track.Name, track.Id);
             
                 _fetchedTracks.Add(
-                    new ManagedPlaylistTrack(convertedTrack));
+                    new SpotifyManagedPlaylistTrack(convertedTrack));
             }
             
             logger.Information("For playlist: {PlaylistName} got {TrackCount} tracks", nativePlaylist.Name, _fetchedTracks.Count);

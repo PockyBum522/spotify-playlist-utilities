@@ -7,6 +7,8 @@ namespace SpotifyPlaylistUtilities;
 
 internal static class Program
 {
+    public static readonly string[] PlaylistNamesToShuffle = [ "Curated Weebletdays", "Beeblet Chill", "Weebletdays Reserves", "Our Songs <3", "Jazz", "Muzicalz", "Tally Hall and Stuf", "Crimbus", "Metal", "Art Music", "Pixel Gardener", "PG - To Check", "What fresh hell is this", "WTF are you listening to David", "Dirty Songs", "Best of the best" ];
+    
     internal static async Task Main()
     {
         var dependencyContainer = await DependencyInjectionRoot.GetBuiltContainer();
@@ -19,17 +21,21 @@ internal static class Program
         // await inspectDeserializedJsonFileAsPlaylist(scope);     // You'll probably want to set a breakpoint in this method
         
         // Uncomment only one of these at a time
-        await shufflePlaylistImmediatelyOnce(scope);
+        await shuffleAllPlaylistsImmediatelyOnce(scope);
         // await startScheduler(scope);
-        
-        
     }
     
-    private static Task shufflePlaylistImmediatelyOnce(ILifetimeScope scope)
+    private static async Task shuffleAllPlaylistsImmediatelyOnce(ILifetimeScope scope)
     {
+        var searcher = scope.Resolve<Searcher>();
+        var shuffler = scope.Resolve<Shuffler>();
+
+        foreach (var playlistName in PlaylistNamesToShuffle)
+        {
+            var spotifyPlaylist = await searcher.GetPlaylistByName(playlistName);
         
-        
-        return Task.CompletedTask;
+            await shuffler.ShuffleAllIn(spotifyPlaylist, false);    
+        }
     }
 
     private static async Task startScheduler(ILifetimeScope scope)
