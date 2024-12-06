@@ -61,8 +61,13 @@ public class DependencyInjectionRoot
 
         DependencyContainerBuilder.RegisterModule(new QuartzAutofacJobsModule(typeof(ShufflePlaylistJob).Assembly));
         DependencyContainerBuilder.RegisterType<JobScheduler>().AsSelf().SingleInstance();
+        
         DependencyContainerBuilder.RegisterType<ClientManager>().AsSelf().SingleInstance();
+        DependencyContainerBuilder.RegisterType<Searcher>().AsSelf().SingleInstance();
         DependencyContainerBuilder.RegisterType<InfoPrinter>().AsSelf().SingleInstance();
+        DependencyContainerBuilder.RegisterType<TracksAdder>().AsSelf().SingleInstance();
+        DependencyContainerBuilder.RegisterType<TracksRemover>().AsSelf().SingleInstance();
+        DependencyContainerBuilder.RegisterType<BackupOperator>().AsSelf().SingleInstance();
         
         // Build the DI container        
         var container = DependencyContainerBuilder.Build();
