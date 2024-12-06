@@ -11,6 +11,8 @@ using SpotifyPlaylistUtilities.Scheduler.SchedulerLogging;
 using SpotifyPlaylistUtilities.SpotifyApiClient;
 using SpotifyPlaylistUtilities.SpotifyApiClient.PlaylistBackups;
 using SpotifyPlaylistUtilities.SpotifyApiClient.Playlists;
+using SpotifyPlaylistUtilities.SpotifyApiClient.Utilities;
+using SpotifyPlaylistUtilities.SpotifyApiClient.WeightsFile;
 
 namespace SpotifyPlaylistUtilities;
 
@@ -70,6 +72,8 @@ public class DependencyInjectionRoot
         DependencyContainerBuilder.RegisterType<Shuffler>().AsSelf().SingleInstance();
         DependencyContainerBuilder.RegisterType<BackupOperator>().AsSelf().SingleInstance();
         DependencyContainerBuilder.RegisterType<RestoreOperator>().AsSelf().SingleInstance();
+        DependencyContainerBuilder.RegisterType<FilenameSafer>().AsSelf().SingleInstance();
+        DependencyContainerBuilder.RegisterType<WeightsFileManager>().AsSelf().SingleInstance();
         
         // Build the DI container        
         var container = DependencyContainerBuilder.Build();

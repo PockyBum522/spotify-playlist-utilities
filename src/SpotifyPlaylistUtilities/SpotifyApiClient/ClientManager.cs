@@ -33,7 +33,9 @@ public class ClientManager(ILogger _logger)
 
     private async Task<bool> ensureClientIsConnected()
     {
-        if (!File.Exists(AppInfo.Paths.CredentialsFullPath) || _spotifyClient is null)
+        _logger.Information("Checking for credentials file at: {CredentialsFullPath}", AppInfo.Paths.CredentialsFullPath);
+        
+        if (!File.Exists(AppInfo.Paths.CredentialsFullPath))
             await completeOAuth();
 
         var clientWasAlreadyConnected = await spotifyClientIsReady(); 

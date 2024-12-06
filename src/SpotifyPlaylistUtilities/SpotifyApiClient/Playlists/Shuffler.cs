@@ -1,12 +1,14 @@
 using System.Security.Cryptography;
+using Newtonsoft.Json;
 using Serilog;
 using SpotifyPlaylistUtilities.Models;
 using SpotifyPlaylistUtilities.Models.Serializable;
 using SpotifyPlaylistUtilities.SpotifyApiClient.PlaylistBackups;
+using SpotifyPlaylistUtilities.SpotifyApiClient.WeightsFile;
 
 namespace SpotifyPlaylistUtilities.SpotifyApiClient.Playlists;
 
-public class Shuffler(ILogger _logger, BackupOperator _backupOperator, TracksRemover _tracksRemover, TracksAdder _tracksAdder)
+public class Shuffler(ILogger _logger, Searcher _searcher, BackupOperator _backupOperator, TracksRemover _tracksRemover, TracksAdder _tracksAdder, WeightsFileManager _weightsReader, WeightsFileManager _weightsManager)
 {
     /// <summary>
     /// Gets all tracks in a playlist, backs them up, removes them, then re-adds them all in a random order
@@ -30,25 +32,84 @@ public class Shuffler(ILogger _logger, BackupOperator _backupOperator, TracksRem
         await _tracksAdder.AddTracksToSpotifyPlaylist(spotifyPlaylist, allTracksShuffled);
     }
     
-    // private List<SerializableManagedPlaylistTrack> getRandomTracksConsideringWeights(List<SpotifyManagedPlaylistTrack> spotifyPlaylistFetchedTracks, int numberOfTracksToGet)
-    // {
-    //     // Make sure track weights file exists, if not, create it
-    //     
-    //     // Grab a random track from spotifyPlaylistFetchedTracks (MAKE SURE THERE'S A GOOD TRUE RANDOM WAY TO DO THIS)
-    //     
-    //     // Get that track's weight in the weights list JSON
-    //     
-    //     // Roll to see if the track sticks
-    //     
-    //     //      If it gets OVER the weight, add it to return tracks and increment weight in json weights file
-    //     
-    //     //      If it gets UNDER the weight, do nothing
-    //     
-    //     
-    //     // Decrement all track weights in weights file when finished rolling
-    // }
+    public async Task MakeSelectDaily()
+    {
+        var spotifySelections = await _searcher.GetPlaylistByName("Select Selections");
+        var spotifyCurated = await _searcher.GetPlaylistByName("Curated Weebletdays");
+        var spotifySelectDaily = await _searcher.GetPlaylistByName("Weebletdays Select Daily");
+        
+        var selectSelectionsRandom = randomizeTracksOrder(spotifySelections.FetchedTracks);
+        var curatedRandom = randomizeTracksOrder(spotifyCurated.FetchedTracks);
+
+        _logger.Information("Curated Weebletdays track count: {CuratedCount}, Select Selections track count: {SelectCount}", curatedRandom.Count, selectSelectionsRandom.Count);
+        
+        var trimmedCuratedRandom = removeIdenticalTracks(selectSelectionsRandom, curatedRandom);
+
+        _logger.Information("Trimmed Curated Weebletdays track count: {CuratedCount}", trimmedCuratedRandom.Count);
+
+        var selectionsToMerge = getPlaylistTracksWithWeightsConsidered("Weebletdays Select Daily", selectSelectionsRandom, 200);
+        var curatedToMerge = getPlaylistTracksWithWeightsConsidered("Weebletdays Select Daily", trimmedCuratedRandom, 200);
+        
+        var allTracks = selectionsToMerge.Concat(curatedToMerge).ToList();
+        
+        allTracks = allTracks.OrderBy(t => t.RandomShuffleNumber).ToList();
+        
+        await _tracksRemover.DeleteAllSpotifyPlaylistTracks(spotifySelectDaily);
+
+        await _tracksAdder.AddTracksToSpotifyPlaylist(spotifySelectDaily, allTracks);
+    }
+
+    private List<SerializableManagedPlaylistTrack> removeIdenticalTracks(List<SerializableManagedPlaylistTrack> tracksToRemove, List<SerializableManagedPlaylistTrack> removeFrom)
+    {
+        var returnTracks = new List<SerializableManagedPlaylistTrack>();
+        
+        foreach (var track in removeFrom)
+        {
+            if (tracksToRemove.Any(t => t.Id == track.Id))
+                continue;
+                
+            returnTracks.Add(track);
+        }
+
+        return returnTracks;
+    }
+
+    private List<SerializableManagedPlaylistTrack> getPlaylistTracksWithWeightsConsidered(string playlistName, List<SerializableManagedPlaylistTrack> allTracksRandomized, int count)
+    {
+        var returnTracks = new List<SerializableManagedPlaylistTrack>();
+
+        for (var i = 0; i < allTracksRandomized.Count; i++)
+        {
+            var track = allTracksRandomized[i];
+            
+            var trackWeight = _weightsReader.GetTrackWeight(playlistName, track.Id);
+
+            var randomDie = RandomNumberGenerator.GetInt32(0, 100);
+            
+            _logger.Information("\nRolling: {Die} for track weight: {Weight} on track: {Name}", randomDie, trackWeight, track.Name);
+            
+            if (randomDie < trackWeight) continue;
+
+            // Otherwise, if we rolled OVER track weight:
+            _logger.Information("Adding track!");
+
+            returnTracks.Add(track);
+
+            _weightsManager.IncrementTrackWeight(playlistName, track);
+            
+            _logger.Information(
+                "Now incrementing weight for track {Name}, new weight is {NewWeight}",
+                track.Name, _weightsManager.GetTrackWeight(playlistName, track.Id));
+            
+            if (--count < 1) break;
+        }
+
+        _weightsManager.DecrementAllTracks(playlistName);
+        
+        return returnTracks;
+    }
     
-    private List<SerializableManagedPlaylistTrack> randomizeTracksOrder(List<SpotifyManagedPlaylistTrack> spotifyPlaylistFetchedTracks, int? numberOfTracks = null)
+    private List<SerializableManagedPlaylistTrack> randomizeTracksOrder(List<SpotifyManagedPlaylistTrack> spotifyPlaylistFetchedTracks)
     {
         var randomizedTracks = new List<SerializableManagedPlaylistTrack>();
 
@@ -70,12 +131,10 @@ public class Shuffler(ILogger _logger, BackupOperator _backupOperator, TracksRem
         
         var returnTracks = new List<SerializableManagedPlaylistTrack>();
 
-        numberOfTracks ??= randomizedTracks.Count;
+        var numberOfTracks = randomizedTracks.Count;
         
         while (numberOfTracks-- > 0)
-        {
-            returnTracks.Add(randomizedTracks[(int)numberOfTracks]);
-        }
+            returnTracks.Add(randomizedTracks[numberOfTracks]);
         
         return returnTracks;
     }

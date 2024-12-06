@@ -43,7 +43,7 @@ public static class AppInfo
 
         private static void setAllPaths(string basePath)
         {
-            var logBasePath = Path.Join(basePath, "Logs");
+            var logBasePath = Path.Join(basePath, "logs");
             
             ApplicationLoggingDirectory = Path.Join(logBasePath, "application");
             PlaylistCountsLoggingDirectory = Path.Join(logBasePath, "playlist-counts");
