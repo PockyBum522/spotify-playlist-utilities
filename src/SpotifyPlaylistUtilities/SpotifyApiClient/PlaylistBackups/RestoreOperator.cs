@@ -9,13 +9,8 @@ public class RestoreOperator(ILogger _logger, Searcher _searcher, TracksRemover 
 {
     public async Task RestorePlaylistFromJsonFile(string jsonFilePath)
     {
-        var rawJson = await File.ReadAllTextAsync(jsonFilePath);
-
-        var convertedPlaylist = JsonConvert.DeserializeObject<SerializableManagedPlaylist>(rawJson);
+        var convertedPlaylist = await DeserializeOnlyFromJsonFile(jsonFilePath);
         
-        if (convertedPlaylist is null) 
-            throw new NullReferenceException($"convertedPlaylist is null in {nameof(RestorePlaylistFromJsonFile)}");
-
         var spotifyPlaylist = await _searcher.GetPlaylistByName(convertedPlaylist.Name);
         
         if (spotifyPlaylist is null) throw new NullReferenceException(
@@ -27,6 +22,18 @@ public class RestoreOperator(ILogger _logger, Searcher _searcher, TracksRemover 
         await _tracksRemover.DeleteAllSpotifyPlaylistTracks(spotifyPlaylist);
         
         await _tracksAdder.AddTracksToSpotifyPlaylist(spotifyPlaylist, convertedPlaylist.FetchedTracks);
+    }
+    
+    public async Task<SerializableManagedPlaylist> DeserializeOnlyFromJsonFile(string jsonFilePath)
+    {
+        var rawJson = await File.ReadAllTextAsync(jsonFilePath);
+
+        var convertedPlaylist = JsonConvert.DeserializeObject<SerializableManagedPlaylist>(rawJson);
+        
+        if (convertedPlaylist is null) 
+            throw new NullReferenceException($"convertedPlaylist is null in {nameof(RestorePlaylistFromJsonFile)}");
+
+        return convertedPlaylist;
     }
 
     private void warnUserPlaylistIdsDiffer(string playlistName)
