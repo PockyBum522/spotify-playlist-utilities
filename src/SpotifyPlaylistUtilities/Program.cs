@@ -17,15 +17,13 @@ internal static class Program
         // await printAllPlaylistNamesAndIds(scope);
 
         // Uncomment only one of these at a time
-        // await shuffleAllPlaylistsImmediatelyOnce(scope);
+        await shuffleAllPlaylistsImmediatelyOnce(scope);
         // await startScheduler(scope);
 
         
         // await restoreTracksFromJsonBackupFile(scope);
         
         // await inspectDeserializedJsonFileAsPlaylist(scope);     // You'll probably want to set a breakpoint in this method
-
-        await makeWeebletdaysSelectDaily(scope);
     }
 
     private static async Task makeWeebletdaysSelectDaily(ILifetimeScope scope)
@@ -46,6 +44,8 @@ internal static class Program
         
             await shuffler.ShuffleAllIn(spotifyPlaylist, false);    
         }
+        
+        await makeWeebletdaysSelectDaily(scope);
     }
 
     private static async Task startScheduler(ILifetimeScope scope)
