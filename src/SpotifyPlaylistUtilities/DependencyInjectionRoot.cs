@@ -5,8 +5,12 @@ using Quartz;
 using Quartz.Impl;
 using Quartz.Logging;
 using Serilog;
+using SpotifyAPI.Web;
 using SpotifyPlaylistUtilities.RecurringJobs;
 using SpotifyPlaylistUtilities.Scheduler;
+using SpotifyPlaylistUtilities.Scheduler.SchedulerLogging;
+using SpotifyPlaylistUtilities.SpotifyApiClient;
+using SpotifyPlaylistUtilities.SpotifyApiClient.Playlists;
 
 namespace SpotifyPlaylistUtilities;
 
@@ -24,7 +28,7 @@ public class DependencyInjectionRoot
     
     private static readonly ContainerBuilder DependencyContainerBuilder = new ();
     
-    public static async Task<IContainer> GetBuiltContainer(bool useFullscreen, bool useMocks)
+    public static async Task<IContainer> GetBuiltContainer()
     {
         DependencyContainerBuilder.RegisterInstance(LoggerApplication).As<ILogger>().SingleInstance();
         
@@ -57,9 +61,13 @@ public class DependencyInjectionRoot
 
         DependencyContainerBuilder.RegisterModule(new QuartzAutofacJobsModule(typeof(ShufflePlaylistJob).Assembly));
         DependencyContainerBuilder.RegisterType<JobScheduler>().AsSelf().SingleInstance();
+        DependencyContainerBuilder.RegisterType<ClientManager>().AsSelf().SingleInstance();
+        DependencyContainerBuilder.RegisterType<InfoPrinter>().AsSelf().SingleInstance();
         
+        // Build the DI container        
         var container = DependencyContainerBuilder.Build();
 
+        // Start the scheduler
         var scheduler = container.Resolve<JobScheduler>();
         await scheduler.Start();
         

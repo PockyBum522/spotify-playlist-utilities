@@ -39,25 +39,30 @@ public static class AppInfo
         private static void setAllPaths(string basePath)
         {
             var logBasePath = Path.Join(basePath, "Logs");
-
+            
             ApplicationLoggingDirectory = Path.Join(logBasePath, "application");
             PlaylistCountsLoggingDirectory = Path.Join(logBasePath, "playlist-counts");
             PlaylistBackupsDirectory = Path.Join(basePath, "playlist-backups");
             TrackWeightsDirectory = Path.Join(basePath, "track-weights");
+            CacheDirectory = Path.Join(basePath, "cache");
             
             TrackWeightsJsonFullPath = Path.Join(basePath, "known-track-weights.json");
+            CredentialsFullPath = Path.Join(CacheDirectory, "credentials.json");
             
             Directory.CreateDirectory(PlaylistCountsLoggingDirectory);
             Directory.CreateDirectory(ApplicationLoggingDirectory);
             Directory.CreateDirectory(PlaylistBackupsDirectory);
             Directory.CreateDirectory(TrackWeightsDirectory);
+            Directory.CreateDirectory(CacheDirectory);
         }
 
+        public static string CacheDirectory { get; private set; }
         public static string PlaylistCountsLoggingDirectory { get; private set; }
         public static string ApplicationLoggingDirectory { get; private set; }
         public static string PlaylistBackupsDirectory { get; private set; }
         public static string TrackWeightsDirectory { get; private set; }
         
         public static string TrackWeightsJsonFullPath { get; private set; }
+        public static string CredentialsFullPath { get; private set; }
     }
 }

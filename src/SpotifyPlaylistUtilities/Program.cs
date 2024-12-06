@@ -1,9 +1,18 @@
-﻿namespace SpotifyPlaylistUtilities;
+﻿using Autofac;
+using SpotifyPlaylistUtilities.SpotifyApiClient.Playlists;
 
-class Program
+namespace SpotifyPlaylistUtilities;
+
+internal static class Program
 {
-    static void Main(string[] args)
+    internal static async Task Main()
     {
-        Console.WriteLine("Hello, World!");
+        var dependencyContainer = await DependencyInjectionRoot.GetBuiltContainer();
+        
+        await using var scope = dependencyContainer.BeginLifetimeScope();
+        
+        var infoPrinter = scope.Resolve<InfoPrinter>();
+
+        await infoPrinter.PrintAllPlaylists();
     }
 }

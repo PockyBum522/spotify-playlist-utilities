@@ -2,7 +2,7 @@
 using Serilog;
 using LogContext = Serilog.Context.LogContext;
 
-namespace SpotifyPlaylistUtilities.Scheduler;
+namespace SpotifyPlaylistUtilities.Scheduler.SchedulerLogging;
 
 public class QuartzCustomSerilogLogProvider(ILogger logger) : ILogProvider
 {
