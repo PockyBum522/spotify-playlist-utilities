@@ -72,10 +72,6 @@ public class DependencyInjectionRoot
         
         // Build the DI container        
         var container = DependencyContainerBuilder.Build();
-
-        // Start the scheduler
-        var scheduler = container.Resolve<JobScheduler>();
-        await scheduler.Start();
         
         return container;
     }
