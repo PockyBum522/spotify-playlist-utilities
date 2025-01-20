@@ -5,8 +5,8 @@ using Quartz;
 using Quartz.Impl;
 using Quartz.Logging;
 using Serilog;
-using SpotifyPlaylistUtilities.RecurringJobs;
 using SpotifyPlaylistUtilities.Scheduler;
+using SpotifyPlaylistUtilities.Scheduler.RecurringJobs;
 using SpotifyPlaylistUtilities.Scheduler.SchedulerLogging;
 using SpotifyPlaylistUtilities.SpotifyApiClient;
 using SpotifyPlaylistUtilities.SpotifyApiClient.PlaylistBackups;
@@ -21,8 +21,8 @@ public class DependencyInjectionRoot
 {
     public static readonly ILogger LoggerApplication = new LoggerConfiguration()
         .Enrich.WithProperty(AppInfo.AppName + "Application", AppInfo.AppName + "SerilogContext")
-        .MinimumLevel.Information()
-        //.MinimumLevel.Debug()
+        //.MinimumLevel.Information()
+        .MinimumLevel.Debug()
         .WriteTo.File(
             Path.Join(AppInfo.Paths.ApplicationLoggingDirectory, "log_.log"), rollingInterval: RollingInterval.Day)
         .WriteTo.Debug()

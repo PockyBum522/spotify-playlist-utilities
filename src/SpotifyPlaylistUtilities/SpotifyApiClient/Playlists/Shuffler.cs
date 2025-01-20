@@ -52,7 +52,7 @@ public class Shuffler(ILogger _logger, Searcher _searcher, BackupOperator _backu
         
         var allTracks = selectionsToMerge.Concat(curatedToMerge).ToList();
         
-        allTracks = allTracks.OrderBy(t => t.RandomShuffleNumber).ToList();
+        var randomizedDaily = randomizeTracksOrder(allTracks);
         
         await _tracksRemover.DeleteAllSpotifyPlaylistTracks(spotifySelectDaily);
 
@@ -110,6 +110,36 @@ public class Shuffler(ILogger _logger, Searcher _searcher, BackupOperator _backu
     }
     
     private List<SerializableManagedPlaylistTrack> randomizeTracksOrder(List<SpotifyManagedPlaylistTrack> spotifyPlaylistFetchedTracks)
+    {
+        var randomizedTracks = new List<SerializableManagedPlaylistTrack>();
+
+        for (var i = 0; i < spotifyPlaylistFetchedTracks.Count; i++)
+        {
+            var track = spotifyPlaylistFetchedTracks[i];
+            var returnTrack = new SerializableManagedPlaylistTrack()
+            {
+                Id = track.Id,
+                Name = track.Name,
+                Uri = track.Uri,
+                RandomShuffleNumber = RandomNumberGenerator.GetInt32(0, 10000000)
+            };
+
+            randomizedTracks.Add(returnTrack);
+        }
+        
+        randomizedTracks = randomizedTracks.OrderBy(t => t.RandomShuffleNumber).ToList();
+        
+        var returnTracks = new List<SerializableManagedPlaylistTrack>();
+
+        var numberOfTracks = randomizedTracks.Count;
+        
+        while (numberOfTracks-- > 0)
+            returnTracks.Add(randomizedTracks[numberOfTracks]);
+        
+        return returnTracks;
+    }
+    
+    private List<SerializableManagedPlaylistTrack> randomizeTracksOrder(List<SerializableManagedPlaylistTrack> spotifyPlaylistFetchedTracks)
     {
         var randomizedTracks = new List<SerializableManagedPlaylistTrack>();
 

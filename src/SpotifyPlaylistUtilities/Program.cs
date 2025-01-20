@@ -17,11 +17,10 @@ internal static class Program
         // await printAllPlaylistNamesAndIds(scope);
 
         // Uncomment only one of these at a time
-        await shuffleAllPlaylistsImmediatelyOnce(scope);
-        // await startScheduler(scope);
+        //await shuffleAllPlaylistsImmediatelyOnce(scope); // await makeWeebletdaysSelectDaily(scope); // (Although shuffleAllPlaylistsImmediatelyOnce() already does this)
+        await startScheduler(scope);
 
-        
-        // await restoreTracksFromJsonBackupFile(scope);
+        //await restoreTracksFromJsonBackupFile(scope, "/home/david/SpotifyPlaylistUtilities/playlist-backups/Pixel Gardener/2024-12-15_T03-23-12_7pnXJ7jWswV32QGjJwyuFY.json");
         
         // await inspectDeserializedJsonFileAsPlaylist(scope);     // You'll probably want to set a breakpoint in this method
     }
@@ -52,6 +51,11 @@ internal static class Program
     {
         var scheduler = scope.Resolve<JobScheduler>();
         await scheduler.Start();
+
+        while (true)
+        {
+            await Task.Delay(999);
+        }
     }
 
     private static async Task inspectDeserializedJsonFileAsPlaylist(ILifetimeScope scope)
@@ -61,10 +65,10 @@ internal static class Program
         Console.WriteLine(deserializedPlaylist.Name);
     }
 
-    private static async Task restoreTracksFromJsonBackupFile(ILifetimeScope scope)
+    private static async Task restoreTracksFromJsonBackupFile(ILifetimeScope scope, string fullPathJson)
     {
         var restoreOperator = scope.Resolve<RestoreOperator>();
-        await restoreOperator.RestorePlaylistFromJsonFile("/home/david/Desktop/Pixel Gardener/2024-12-02_T03-13-35_7pnXJ7jWswV32QGjJwyuFY.json");
+        await restoreOperator.RestorePlaylistFromJsonFile(fullPathJson);
     }
 
     private static async Task printAllPlaylistNamesAndIds(ILifetimeScope scope)

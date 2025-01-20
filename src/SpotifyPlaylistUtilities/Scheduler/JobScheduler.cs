@@ -1,6 +1,6 @@
 ﻿using Quartz;
 using Serilog;
-using SpotifyPlaylistUtilities.RecurringJobs;
+using SpotifyPlaylistUtilities.Scheduler.RecurringJobs;
 
 namespace SpotifyPlaylistUtilities.Scheduler;
 
@@ -16,7 +16,7 @@ public class JobScheduler(ILogger logger, IScheduler scheduler)
         // Configure it for new job name and type
         // Then register it near the top of DependencyInjectionRoot 
         
-        await setupRecurringJob<ShufflePlaylistJob>("AlarmJobs", _firstRunAt, 5);
+        await setupRecurringJob<ShufflePlaylistJob>("AlarmJobs", _firstRunAt, 24);
         
         await scheduler.Start();
     }
