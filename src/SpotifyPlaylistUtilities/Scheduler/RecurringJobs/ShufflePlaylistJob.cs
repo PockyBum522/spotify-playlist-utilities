@@ -12,14 +12,10 @@ public class ShufflePlaylistJob(ILogger loggerApplication, Searcher searcher, Sh
     {
         loggerApplication.Information("Firing scheduled job {ThisName}", nameof(ShufflePlaylistJob));
         
-        foreach (var playlistName in Program.PlaylistNamesToShuffle)
-        {
-            var spotifyPlaylist = await searcher.GetPlaylistByName(playlistName);
+        var dependencyContainer = await DependencyInjectionRoot.GetBuiltContainer();
+        await using var scope = dependencyContainer.BeginLifetimeScope();
         
-            await shuffler.ShuffleAllIn(spotifyPlaylist, false);    
-        }
-        
-        await shuffler.MakeSelectDaily();
+        await Program.ShuffleAllPlaylistsImmediatelyOnce(scope);
         
         loggerApplication.Information("Finished scheduled job {ThisName}", nameof(ShufflePlaylistJob));
     }

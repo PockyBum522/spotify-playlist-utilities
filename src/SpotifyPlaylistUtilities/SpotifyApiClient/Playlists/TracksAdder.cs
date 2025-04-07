@@ -35,11 +35,22 @@ public class TracksAdder(ILogger logger, ClientManager spotifyClientManager)
         // Otherwise, since we can only add 100 at a time:
         var tracksAddRequest = new PlaylistAddItemsRequest(urisToAdd);
 
-        await spotifyClient.Playlists.AddItems(spotifyPlaylist.Id, tracksAddRequest);
-
+        try
+        {
+            await spotifyClient.Playlists.AddItems(spotifyPlaylist.Id, tracksAddRequest);
+        }
+        catch (APIException)
+        {
+            logger.Error("Failed to add items, retrying once after delay");
+            
+            await Task.Delay(20000);
+            
+            await spotifyClient.Playlists.AddItems(spotifyPlaylist.Id, tracksAddRequest);
+        }
+        
         urisToAdd.Clear();
         
         // Lazy rate-limiting because I do not care how long this takes, not to mention track deletes are slow anyways
-        await Task.Delay(2000);
+        await Task.Delay(3000);
     }
 }

@@ -17,10 +17,10 @@ internal static class Program
         // await printAllPlaylistNamesAndIds(scope);
 
         // Uncomment only one of these at a time
-        //await shuffleAllPlaylistsImmediatelyOnce(scope); // await makeWeebletdaysSelectDaily(scope); // (Although shuffleAllPlaylistsImmediatelyOnce() already does this)
-        await startScheduler(scope);
+        await ShuffleAllPlaylistsImmediatelyOnce(scope); // await makeWeebletdaysSelectDaily(scope); // (Although shuffleAllPlaylistsImmediatelyOnce() already does this)
+        //await startScheduler(scope);
 
-        //await restoreTracksFromJsonBackupFile(scope, "/home/david/SpotifyPlaylistUtilities/playlist-backups/Pixel Gardener/2024-12-15_T03-23-12_7pnXJ7jWswV32QGjJwyuFY.json");
+        //await restoreTracksFromJsonBackupFile(scope, "/home/david/SpotifyPlaylistUtilities/playlist-backups/Metal/2025-04-06_T19-10-28_7zBTbIZz2lMy31TQlZvI5m.json");
         
         // await inspectDeserializedJsonFileAsPlaylist(scope);     // You'll probably want to set a breakpoint in this method
     }
@@ -32,7 +32,7 @@ internal static class Program
         await shuffler.MakeSelectDaily();
     }
 
-    private static async Task shuffleAllPlaylistsImmediatelyOnce(ILifetimeScope scope)
+    public static async Task ShuffleAllPlaylistsImmediatelyOnce(ILifetimeScope scope)
     {
         var searcher = scope.Resolve<Searcher>();
         var shuffler = scope.Resolve<Shuffler>();
