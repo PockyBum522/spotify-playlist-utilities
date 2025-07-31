@@ -9,6 +9,7 @@ using SpotifyPlaylistUtilities.Scheduler;
 using SpotifyPlaylistUtilities.Scheduler.RecurringJobs;
 using SpotifyPlaylistUtilities.Scheduler.SchedulerLogging;
 using SpotifyPlaylistUtilities.SpotifyApiClient;
+using SpotifyPlaylistUtilities.SpotifyApiClient.Artists;
 using SpotifyPlaylistUtilities.SpotifyApiClient.PlaylistBackups;
 using SpotifyPlaylistUtilities.SpotifyApiClient.Playlists;
 using SpotifyPlaylistUtilities.SpotifyApiClient.Utilities;
@@ -65,7 +66,7 @@ public class DependencyInjectionRoot
         DependencyContainerBuilder.RegisterType<JobScheduler>().AsSelf().SingleInstance();
         
         DependencyContainerBuilder.RegisterType<ClientManager>().AsSelf().SingleInstance();
-        DependencyContainerBuilder.RegisterType<Searcher>().AsSelf().SingleInstance();
+        DependencyContainerBuilder.RegisterType<PlaylistSearcher>().AsSelf().SingleInstance();
         DependencyContainerBuilder.RegisterType<InfoPrinter>().AsSelf().SingleInstance();
         DependencyContainerBuilder.RegisterType<TracksAdder>().AsSelf().SingleInstance();
         DependencyContainerBuilder.RegisterType<TracksRemover>().AsSelf().SingleInstance();
@@ -74,6 +75,7 @@ public class DependencyInjectionRoot
         DependencyContainerBuilder.RegisterType<RestoreOperator>().AsSelf().SingleInstance();
         DependencyContainerBuilder.RegisterType<FilenameSafer>().AsSelf().SingleInstance();
         DependencyContainerBuilder.RegisterType<WeightsFileManager>().AsSelf().SingleInstance();
+        DependencyContainerBuilder.RegisterType<ArtistsAdder>().AsSelf().SingleInstance();
         
         // Build the DI container        
         var container = DependencyContainerBuilder.Build();

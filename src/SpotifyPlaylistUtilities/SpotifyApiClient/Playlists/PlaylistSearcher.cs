@@ -3,7 +3,7 @@ using SpotifyPlaylistUtilities.Models;
 
 namespace SpotifyPlaylistUtilities.SpotifyApiClient.Playlists;
 
-public class Searcher(ILogger logger, ClientManager spotifyClientManager)
+public class PlaylistSearcher(ILogger logger, ClientManager spotifyClientManager)
 {
     public async Task<SpotifyManagedPlaylist> GetPlaylistByName(string playlistName)
     {

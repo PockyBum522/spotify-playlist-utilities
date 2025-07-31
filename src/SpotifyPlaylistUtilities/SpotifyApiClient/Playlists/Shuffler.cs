@@ -1,5 +1,4 @@
 using System.Security.Cryptography;
-using Newtonsoft.Json;
 using Serilog;
 using SpotifyPlaylistUtilities.Models;
 using SpotifyPlaylistUtilities.Models.Serializable;
@@ -8,7 +7,7 @@ using SpotifyPlaylistUtilities.SpotifyApiClient.WeightsFile;
 
 namespace SpotifyPlaylistUtilities.SpotifyApiClient.Playlists;
 
-public class Shuffler(ILogger _logger, Searcher _searcher, BackupOperator _backupOperator, TracksRemover _tracksRemover, TracksAdder _tracksAdder, WeightsFileManager _weightsReader, WeightsFileManager _weightsManager)
+public class Shuffler(ILogger _logger, PlaylistSearcher playlistSearcher, BackupOperator _backupOperator, TracksRemover _tracksRemover, TracksAdder _tracksAdder, WeightsFileManager _weightsReader, WeightsFileManager _weightsManager)
 {
     /// <summary>
     /// Gets all tracks in a playlist, backs them up, removes them, then re-adds them all in a random order
@@ -34,9 +33,9 @@ public class Shuffler(ILogger _logger, Searcher _searcher, BackupOperator _backu
     
     public async Task MakeSelectDaily()
     {
-        var spotifySelections = await _searcher.GetPlaylistByName("Select Selections");
-        var spotifyCurated = await _searcher.GetPlaylistByName("Curated Weebletdays");
-        var spotifySelectDaily = await _searcher.GetPlaylistByName("Weebletdays Select Daily");
+        var spotifySelections = await playlistSearcher.GetPlaylistByName("Select Selections");
+        var spotifyCurated = await playlistSearcher.GetPlaylistByName("Curated Weebletdays");
+        var spotifySelectDaily = await playlistSearcher.GetPlaylistByName("Weebletdays Select Daily");
         
         var selectSelectionsRandom = randomizeTracksOrder(spotifySelections.FetchedTracks);
         var curatedRandom = randomizeTracksOrder(spotifyCurated.FetchedTracks);

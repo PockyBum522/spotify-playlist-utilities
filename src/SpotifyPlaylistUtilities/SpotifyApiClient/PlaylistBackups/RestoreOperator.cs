@@ -5,13 +5,13 @@ using SpotifyPlaylistUtilities.SpotifyApiClient.Playlists;
 
 namespace SpotifyPlaylistUtilities.SpotifyApiClient.PlaylistBackups;
 
-public class RestoreOperator(ILogger _logger, Searcher _searcher, TracksRemover _tracksRemover, TracksAdder _tracksAdder)
+public class RestoreOperator(ILogger _logger, PlaylistSearcher playlistSearcher, TracksRemover _tracksRemover, TracksAdder _tracksAdder)
 {
     public async Task RestorePlaylistFromJsonFile(string jsonFilePath)
     {
         var convertedPlaylist = await DeserializeOnlyFromJsonFile(jsonFilePath);
         
-        var spotifyPlaylist = await _searcher.GetPlaylistByName(convertedPlaylist.Name);
+        var spotifyPlaylist = await playlistSearcher.GetPlaylistByName(convertedPlaylist.Name);
         
         if (spotifyPlaylist is null) throw new NullReferenceException(
             $"Could not find spotify playlist named: {convertedPlaylist.Name} in {nameof(RestorePlaylistFromJsonFile)}");
