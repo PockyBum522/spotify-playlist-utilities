@@ -14,11 +14,15 @@ Needs a better paginator with a delay between requests, but works fine for now. 
 
 # SECRETS.cs format
 
+(I'm switching between two users depending on detected username. If you go to use this code, you can just switch to one client ID that you get from your spotify developer dashboard. All code to switch between users should be in ClientManager.cs)
+
 ```
-// ReSharper disable InconsistentNaming because I like having secret constants be capitalized 
 namespace SpotifyPlaylistUtilities;
 
+// ReSharper disable InconsistentNaming
 public static class SECRETS
 {
-    public static string SPOTIFY_CLIENT_ID => "[The client ID you got from your spotify developer dashboard]";
+    public static string SPOTIFY_CLIENT_ID_DAVID => "36fadc3687";
+    public static string SPOTIFY_CLIENT_ID_CEEZ => "a8fd9b67d9";
 }
+```
