@@ -13,6 +13,27 @@ public class TracksAdder(ILogger logger, ClientManager spotifyClientManager)
         
         foreach (var track in tracksToAdd)
         {
+            logger.Debug("Attempting to add to spotify playlist: {TrackName}", track.Name);
+    
+            urisToAdd.Add(track.Uri);
+    
+            if (urisToAdd.Count < 100) continue;
+            
+            // If we hit capacity, add and clear
+            await add100ItemsToPlaylist(spotifyPlaylist, urisToAdd);
+        }
+        
+        // Add any remaining
+        if (urisToAdd.Count > 0)
+            await add100ItemsToPlaylist(spotifyPlaylist, urisToAdd);
+    }    
+    
+    public async Task AddTracksToSpotifyPlaylist(SpotifyManagedPlaylist spotifyPlaylist, IList<SimpleTrack> tracksToAdd)
+    {
+        var urisToAdd = new List<string>();
+        
+        foreach (var track in tracksToAdd)
+        {
             logger.Debug("Attempting to add: {TrackName}", track.Name);
     
             urisToAdd.Add(track.Uri);
