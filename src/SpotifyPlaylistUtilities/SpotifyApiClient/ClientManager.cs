@@ -52,6 +52,13 @@ public class ClientManager(ILogger _logger)
         var credentialsJson = await File.ReadAllTextAsync(AppInfo.Paths.CredentialsFullPath);
         var oAuthToken = JsonConvert.DeserializeObject<PKCETokenResponse>(credentialsJson);
 
+        throw new NotImplementedException("Add conditions for which spotify client ID to use for each user in ClientManager.cs");
+        if (Environment.UserName != "david" &&
+            Environment.UserName != "cesar")
+        {
+            throw new NotImplementedException("Add conditions for which spotify client ID to use for each user in ClientManager.cs");
+        }
+        
         var pkceAuthenticator = new PKCEAuthenticator(SECRETS.SPOTIFY_CLIENT_ID_DAVID, oAuthToken!);
         pkceAuthenticator.TokenRefreshed += (_, refreshedToken) => File.WriteAllText(AppInfo.Paths.CredentialsFullPath, JsonConvert.SerializeObject(refreshedToken));
 
