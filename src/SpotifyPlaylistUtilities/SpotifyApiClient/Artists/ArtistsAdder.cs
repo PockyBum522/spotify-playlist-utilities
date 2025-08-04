@@ -48,6 +48,7 @@ public class ArtistsAdder(ILogger _logger, PlaylistSearcher playlistSearcher, Cl
             // Search for all their songs - Daft Punk should be "4tZwfgrHOc3mvqYlEYSvVi"
             var allTracks = await getAllTracksForArtist(foundArtistId, artistName);          
             
+            _logger.Information("Found {TrackCount} matching tracks for artist ID: {ArtistId}", allTracks.Count, foundArtistId);
             _logger.Information("About to add all found tracks to specified playlist: {PlaylistName}", playlistName);
             
             // Add each song to playlist
@@ -62,8 +63,10 @@ public class ArtistsAdder(ILogger _logger, PlaylistSearcher playlistSearcher, Cl
         var spotifyClient = await spotifyClientManager.GetSpotifyClient();
         
         var artistAlbums = await spotifyClient.PaginateAll(await spotifyClient.Artists.GetAlbums(artistId).ConfigureAwait(false));
+
+        _logger.Information("Found {AlbumCount} albums that {ArtistName} is present on", artistAlbums.Count, artistName);
         
-        await Task.Delay(5000);         // Lazy rate-limiting
+        await Task.Delay(3000);         // Lazy rate-limiting
         
         foreach (var artistAlbum in artistAlbums)
         {
@@ -71,7 +74,7 @@ public class ArtistsAdder(ILogger _logger, PlaylistSearcher playlistSearcher, Cl
             
             var albumTracks = await spotifyClient.PaginateAll(await spotifyClient.Albums.GetTracks(albumId).ConfigureAwait(false));
             
-            await Task.Delay(5000);         // Lazy rate-limiting
+            await Task.Delay(3000);         // Lazy rate-limiting
             
             foreach (var albumTrack in albumTracks)
             {

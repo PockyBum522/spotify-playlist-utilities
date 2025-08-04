@@ -27,6 +27,7 @@ public class DependencyInjectionRoot
         .WriteTo.File(
             Path.Join(AppInfo.Paths.ApplicationLoggingDirectory, "log_.log"), rollingInterval: RollingInterval.Day)
         .WriteTo.Debug()
+        .WriteTo.Console()
         .CreateLogger();
     
     private static readonly ContainerBuilder DependencyContainerBuilder = new ();

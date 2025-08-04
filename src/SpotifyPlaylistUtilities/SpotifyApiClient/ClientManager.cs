@@ -52,7 +52,7 @@ public class ClientManager(ILogger _logger)
         var credentialsJson = await File.ReadAllTextAsync(AppInfo.Paths.CredentialsFullPath);
         var oAuthToken = JsonConvert.DeserializeObject<PKCETokenResponse>(credentialsJson);
 
-        var pkceAuthenticator = new PKCEAuthenticator(SECRETS.SPOTIFY_CLIENT_ID, oAuthToken!);
+        var pkceAuthenticator = new PKCEAuthenticator(SECRETS.SPOTIFY_CLIENT_ID_DAVID, oAuthToken!);
         pkceAuthenticator.TokenRefreshed += (_, refreshedToken) => File.WriteAllText(AppInfo.Paths.CredentialsFullPath, JsonConvert.SerializeObject(refreshedToken));
 
         var config = SpotifyClientConfig.CreateDefault().WithAuthenticator(pkceAuthenticator);
@@ -89,8 +89,8 @@ public class ClientManager(ILogger _logger)
 
     private async Task completeOAuth()
     {
-        if (string.IsNullOrEmpty(SECRETS.SPOTIFY_CLIENT_ID))
-            throw new NullReferenceException("Please set SPOTIFY_CLIENT_ID via SECRETS.cs before starting the program");
+        if (string.IsNullOrEmpty(SECRETS.SPOTIFY_CLIENT_ID_DAVID))
+            throw new NullReferenceException("Please set SPOTIFY_CLIENT_ID_DAVID via SECRETS.cs before starting the program");
         
         var completedAuth = false;
         
@@ -101,7 +101,7 @@ public class ClientManager(ILogger _logger)
         {
             await _oAuthServer.Stop();
             var token = await new OAuthClient().RequestToken(
-                new PKCETokenRequest(SECRETS.SPOTIFY_CLIENT_ID, response.Code, _oAuthServer.BaseUri, verifier)
+                new PKCETokenRequest(SECRETS.SPOTIFY_CLIENT_ID_DAVID, response.Code, _oAuthServer.BaseUri, verifier)
             );
 
             await File.WriteAllTextAsync(AppInfo.Paths.CredentialsFullPath, JsonConvert.SerializeObject(token));
@@ -109,7 +109,7 @@ public class ClientManager(ILogger _logger)
             completedAuth = true;
         };
 
-        var request = new LoginRequest(_oAuthServer.BaseUri, SECRETS.SPOTIFY_CLIENT_ID, LoginRequest.ResponseType.Code)
+        var request = new LoginRequest(_oAuthServer.BaseUri, SECRETS.SPOTIFY_CLIENT_ID_DAVID, LoginRequest.ResponseType.Code)
         {
             CodeChallenge = challenge,
             CodeChallengeMethod = "S256",
