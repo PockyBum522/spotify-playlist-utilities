@@ -14,18 +14,18 @@ internal static class Program
     
     internal static async Task Main()
     {
-        if (!allRequiredArgumentsPresent())
-        {
-            printCommandLineHelp();
-
-            exitAfterUserPressesKey();
-        }
-        
-        PlaylistNameExact = getPlaylistNameFromCommandLineArguments();
-        ArtistsFilePath = getFilePathFromCommandLineArguments();
-
-        printArguments(PlaylistNameExact, ArtistsFilePath);
-        validateArguments(PlaylistNameExact, ArtistsFilePath);
+        // if (!allRequiredArgumentsPresent())
+        // {
+        //     printCommandLineHelp();
+        //
+        //     exitAfterUserPressesKey();
+        // }
+        //
+        // PlaylistNameExact = getPlaylistNameFromCommandLineArguments();
+        // ArtistsFilePath = getFilePathFromCommandLineArguments();
+        //
+        // printArguments(PlaylistNameExact, ArtistsFilePath);
+        // validateArguments(PlaylistNameExact, ArtistsFilePath);
 
         var dependencyContainer = await DependencyInjectionRoot.GetBuiltContainer();
         await using var scope = dependencyContainer.BeginLifetimeScope();
@@ -34,11 +34,11 @@ internal static class Program
         
         await printAllPlaylistNamesAndIds(scope);
         
-        var artistsAdder = scope.Resolve<ArtistsAdder>();
-        await artistsAdder.AddFromFileToPlaylistNamed(ArtistsFilePath, PlaylistNameExact);
-        
-        logger.Information("Finished adding all tracks for all artists in file: {FilePath}", ArtistsFilePath);
-        exitAfterUserPressesKey();
+        // var artistsAdder = scope.Resolve<ArtistsAdder>();
+        // await artistsAdder.AddFromFileToPlaylistNamed(ArtistsFilePath, PlaylistNameExact);
+        //
+        // logger.Information("Finished adding all tracks for all artists in file: {FilePath}", ArtistsFilePath);
+        // exitAfterUserPressesKey();
     }
 
     private static void validateArguments(string playlistNameExact, string artistsFilePath)
