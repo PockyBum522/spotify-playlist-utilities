@@ -51,7 +51,7 @@ internal static class Program
             
             _currentTime = DateTimeOffset.Now;
             
-            await Task.Delay(28);
+            await Task.Delay(31);
         }
 
         // var artistsAdder = scope.Resolve<ArtistsAdder>();
