@@ -12,6 +12,8 @@ internal static class Program
     private static string PlaylistNameExact = "ERROR GETTING PLAYLIST NAME";
     private static string ArtistsFilePath = "ERROR GETTING ARTIST FILE PATH";
     
+    private static DateTimeOffset _currentTime = DateTimeOffset.Now;
+    
     internal static async Task Main()
     {
         // if (!allRequiredArgumentsPresent())
@@ -34,7 +36,23 @@ internal static class Program
         
         await printAllPlaylistNamesAndIds(scope);
 
-        await makeWeebletdaysSelectDaily(scope);
+        await shufflePixelGardener(scope);
+        
+        while (true)
+        {
+            if (_currentTime.Hour == 3 &&
+                DateTimeOffset.Now.Hour == 4)
+            {
+                // TODO: Fix any possibility of losing tracks before re-enabling this
+                //await ShuffleAllPlaylistsImmediatelyOnce(scope);        
+                
+                await makeWeebletdaysSelectDaily(scope);
+            }
+            
+            _currentTime = DateTimeOffset.Now;
+            
+            await Task.Delay(28);
+        }
 
         // var artistsAdder = scope.Resolve<ArtistsAdder>();
         // await artistsAdder.AddFromFileToPlaylistNamed(ArtistsFilePath, PlaylistNameExact);
@@ -159,6 +177,13 @@ internal static class Program
         var shuffler = scope.Resolve<Shuffler>();
 
         await shuffler.MakeSelectDaily();
+    }
+    
+    private static async Task shufflePixelGardener(ILifetimeScope scope)
+    {
+        var shuffler = scope.Resolve<Shuffler>();
+
+        await shuffler.ShuffleAllIn("Pixel Gardener", false);
     }
 
     // public static async Task ShuffleAllPlaylistsImmediatelyOnce(ILifetimeScope scope)
