@@ -33,7 +33,9 @@ internal static class Program
         var logger = dependencyContainer.Resolve<ILogger>();
         
         await printAllPlaylistNamesAndIds(scope);
-        
+
+        await makeWeebletdaysSelectDaily(scope);
+
         // var artistsAdder = scope.Resolve<ArtistsAdder>();
         // await artistsAdder.AddFromFileToPlaylistNamed(ArtistsFilePath, PlaylistNameExact);
         //
