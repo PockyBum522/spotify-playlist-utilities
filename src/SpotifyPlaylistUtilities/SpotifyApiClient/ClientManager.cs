@@ -9,7 +9,7 @@ namespace SpotifyPlaylistUtilities.SpotifyApiClient;
 public class ClientManager(ILogger _logger)
 {
     private SpotifyClient? _spotifyClient;
-    private readonly EmbedIOAuthServer _oAuthServer = new(new Uri("http://localhost:5543/callback"), 5543);
+    private readonly EmbedIOAuthServer _oAuthServer = new(new Uri("http://127.0.0.1:5543/callback"), 5543);
 
     /// <summary>
     /// This is the only way to access the spotify client. Every time this is called, the client is tested,
@@ -52,14 +52,21 @@ public class ClientManager(ILogger _logger)
         var credentialsJson = await File.ReadAllTextAsync(AppInfo.Paths.CredentialsFullPath);
         var oAuthToken = JsonConvert.DeserializeObject<PKCETokenResponse>(credentialsJson);
 
-        throw new NotImplementedException("Add conditions for which spotify client ID to use for each user in ClientManager.cs");
+        //throw new NotImplementedException("Add conditions for which spotify client ID to use for each user in ClientManager.cs");
         if (Environment.UserName != "david" &&
             Environment.UserName != "cesar")
         {
             throw new NotImplementedException("Add conditions for which spotify client ID to use for each user in ClientManager.cs");
         }
+
+        var clientId = string.Empty;
         
-        var pkceAuthenticator = new PKCEAuthenticator(SECRETS.SPOTIFY_CLIENT_ID_DAVID, oAuthToken!);
+        if (Environment.UserName == "david")
+        {
+            clientId = SECRETS.SPOTIFY_CLIENT_ID_DAVID;
+        }
+        
+        var pkceAuthenticator = new PKCEAuthenticator(clientId, oAuthToken!);
         pkceAuthenticator.TokenRefreshed += (_, refreshedToken) => File.WriteAllText(AppInfo.Paths.CredentialsFullPath, JsonConvert.SerializeObject(refreshedToken));
 
         var config = SpotifyClientConfig.CreateDefault().WithAuthenticator(pkceAuthenticator);
