@@ -30,6 +30,24 @@ public class Shuffler(ILogger _logger, PlaylistSearcher playlistSearcher, Backup
         
         await _tracksAdder.AddTracksToSpotifyPlaylist(spotifyPlaylist, allTracksShuffled);
     }
+
+    public async Task ShuffleAllIn(string playlistName, bool allowDuplicates, bool backupPlaylist = true)
+    {
+        var fetchedPlaylist = await playlistSearcher.GetPlaylistByName(playlistName);
+        
+        if (backupPlaylist)
+            await _backupOperator.BackupTracksToJsonFile(fetchedPlaylist);
+        
+        var allTracksShuffled = 
+            randomizeTracksOrder(fetchedPlaylist.FetchedTracks);
+
+        if (!allowDuplicates)
+            allTracksShuffled = allTracksShuffled.DistinctBy(t => t.Id).ToList();
+        
+        await _tracksRemover.DeleteAllSpotifyPlaylistTracks(fetchedPlaylist);
+        
+        await _tracksAdder.AddTracksToSpotifyPlaylist(fetchedPlaylist, allTracksShuffled);
+    }
     
     public async Task MakeSelectDaily()
     {
